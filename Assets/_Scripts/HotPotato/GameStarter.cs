@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameStarter : MonoBehaviour
 {
-    private int playerMax = 1;
+    private int playerMax = 4;
     private int playerCount = 0;
     private float countDownLength = 1;
     private float countDownCounter = -1;
@@ -67,9 +67,9 @@ public class GameStarter : MonoBehaviour
     {
         gameReady = false;
         playerCount = 0;
-        display.text = "5";
-        if (gameObject.activeSelf)
+        if (display.text != "5")
         {
+            display.text = "5";
             gameObject.SetActive(false);
             display.gameObject.SetActive(false);
         }

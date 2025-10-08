@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -10,6 +11,8 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
     public static event Action<GameState> OnAfterStateChanged;
 
     [SerializeField] private GameStarter gameStarter;
+    [SerializeField] private GameObject potato, fireworks;
+    public Transform[] players = new Transform[4];
 
     public GameState State { get; private set; }
 
@@ -24,24 +27,27 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
         //Debug.Log("New state: " + newState);
         //Debug.Log("Old state: " + State);
         if (State == newState) return;
-
+        State = newState;
         OnBeforeStateChanged?.Invoke(newState);
 
         switch (newState) 
         {
             case GameState.Lobby:
+                ReactivePlayers();
                 gameStarter.Reset();
                 break;
             case GameState.Starting:
                 HandleStarting();
                 break;
             case GameState.LoopingChase:
-                StartCoroutine(PlayLoopXTimes());
+                fireworks.SetActive(false);
+                StartCoroutine(SpawnPotato());
                 break;
             case GameState.FinalCountDown:
                 StartCoroutine(ChorusBuildUp());
                 break;
             case GameState.PlayerDeath:
+                fireworks.SetActive(true);
                 StartCoroutine(HotPotatoExplodeSong());
                 break;
             case GameState.Win:
@@ -52,13 +58,12 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
 
         OnAfterStateChanged?.Invoke(newState);
 
-        Debug.Log($"New state: {newState}");
+        //Debug.Log($"New state: {newState}");
     }
 
     private void HandleStarting()
     {
         AudioSystem.Instance.StopMusic();
-        Debug.Log("PlayLinkin!");
         isFirstLoop = true;
         ChangeState(GameState.LoopingChase);
     }
@@ -68,7 +73,7 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
         {
             AudioSystem.Instance.PlayMusic(AudioSystem.Instance.songs[1], firstLoopDelay);
             isFirstLoop = false;
-            loopCount = UnityEngine.Random.Range(0, 4);
+            loopCount = 0; //UnityEngine.Random.Range(1, 4);
             Debug.Log("Loop count set: " + loopCount);
             yield return new WaitForSeconds(AudioSystem.Instance.GetMusicSource().clip.length - firstLoopDelay);
         }
@@ -77,7 +82,7 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
         {
             AudioSystem.Instance.PlayMusic(AudioSystem.Instance.songs[1], 5.5f);
             isAfterChorus = false;
-            loopCount = UnityEngine.Random.Range(0, 4);
+            loopCount = 0; //UnityEngine.Random.Range(0, 4);
             Debug.Log("Loop count set: " + loopCount);
             yield return new WaitForSeconds(AudioSystem.Instance.GetMusicSource().clip.length - 5.5f);
         }
@@ -102,11 +107,64 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
 
     IEnumerator HotPotatoExplodeSong()
     {
+        Debug.Log("Dance party!");
         AudioSystem.Instance.PlayMusic(AudioSystem.Instance.songs[3]);
+        Debug.Log("Wait length: " +AudioSystem.Instance.GetMusicSource().clip.length);
         yield return new WaitForSeconds(AudioSystem.Instance.GetMusicSource().clip.length - 0.15f);
-        isAfterChorus = true;
-        ChangeState(GameState.LoopingChase);
+        CheckPlayersRemaining();
     }
+
+    IEnumerator SpawnPotato()
+    {
+        Debug.Log("PotatoNumerator");
+        int randomPlayer = UnityEngine.Random.Range(0, 4);
+        if (ExampleGameManager.Instance.players[randomPlayer].gameObject.activeInHierarchy)
+        {
+            Debug.Log("Spawn potato at " + ExampleGameManager.Instance.players[randomPlayer].gameObject.name);
+            Instantiate(potato, ExampleGameManager.Instance.players[randomPlayer].position, Quaternion.identity);
+        }
+        else
+        {
+            yield return null;
+        }
+        StartCoroutine(PlayLoopXTimes());
+    }
+
+    private void CheckPlayersRemaining()
+    {
+        int playerCount = 0;
+        for(int i = 0; ExampleGameManager.Instance.players.Length > i; i++)
+        {
+            if (ExampleGameManager.Instance.players[i].gameObject.activeInHierarchy)
+            {
+                playerCount++;
+            }
+        }
+        Debug.Log("CheckPlayersRemaing playercount: " +  playerCount);
+        if (playerCount == 1) 
+        {
+            // Win!
+            Debug.Log("Restart level");
+            ChangeState(GameState.Lobby);
+        }
+        else
+        { 
+            // Still players left.
+            isAfterChorus = true;
+            ChangeState(GameState.LoopingChase);
+        }
+    }
+
+    private void ReactivePlayers()
+    {
+        Debug.Log("Reactivate players start");
+        for (int i = 0; ExampleGameManager.Instance.players.Length > i; i++)
+        {
+            Debug.Log("Player reactivated: " + i);
+            ExampleGameManager.Instance.players[i].gameObject.SetActive(true);
+        }
+    }
+
 }
 
 // An example of different gameState stages, organized via Enums.

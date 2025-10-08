@@ -6,12 +6,18 @@ using UnityEngine.ProBuilder;
 
 public class HeroUnitBase : UnitBase
 {
-    private bool _canMove;
-    private bool _isAiming;
+    private bool _canMove = true;
+    private bool _isAiming = false;
     [SerializeField] private float jumpForce = 100f;
     [SerializeField] private float jumpCooldownLength = 2f;
     [SerializeField] private float groundCheckDistance = 1f;
     [SerializeField] private LayerMask groundLayer;
+    public float PotatoSpeedMultiplier = 1;
+
+    [SerializeField] private Material[] colors;
+    [SerializeField] private Renderer myBody, myHead;
+
+    //[SerializeField] Transform shadow,;
 
     private float jumpCooldownCounter = -1f;
     private Vector2 leftJoystick, rightJoystick, lastFacedDirection;
@@ -28,6 +34,31 @@ public class HeroUnitBase : UnitBase
 
     private void Start()
     {
+        if (ExampleGameManager.Instance.players[0] == null)
+        {
+            ExampleGameManager.Instance.players[0] = transform;
+            myBody.material = colors[0];
+            myHead.material = colors[0];
+        }
+        else if (ExampleGameManager.Instance.players[1] == null) 
+        {
+            ExampleGameManager.Instance.players[1] = transform;
+            myBody.material = colors[1];
+            myHead.material = colors[1];
+        }
+        else if (ExampleGameManager.Instance.players[2] == null)
+        {
+            ExampleGameManager.Instance.players[2] = transform;
+            myBody.material = colors[2];
+            myHead.material = colors[2];
+        }
+        else if (ExampleGameManager.Instance.players[3] == null)
+        {
+            ExampleGameManager.Instance.players[3] = transform;
+            myBody.material = colors[3];
+            myHead.material = colors[3];
+        }
+
         SetStats(ResourceSystem.Instance.GetExampleHero(0).BaseStats);
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -55,7 +86,7 @@ public class HeroUnitBase : UnitBase
             movementEuler = Mathf.Atan2(leftJoystick.x, leftJoystick.y) * Mathf.Rad2Deg;
             rotationEuler = Mathf.Atan2(rightJoystick.x, rightJoystick.y) * Mathf.Rad2Deg;
 
-            rb.linearVelocity = new Vector3(leftJoystick.x * Stats.TravelDistance, rb.linearVelocity.y, leftJoystick.y * Stats.TravelDistance);
+            rb.linearVelocity = new Vector3(leftJoystick.x * Stats.TravelDistance * PotatoSpeedMultiplier, rb.linearVelocity.y, leftJoystick.y * Stats.TravelDistance * PotatoSpeedMultiplier);
 
             if (!_isAiming && leftJoystick.magnitude > 0)
             {
@@ -186,6 +217,7 @@ public class HeroUnitBase : UnitBase
                 if (currentAnimation == "")
                     CheckAnimation();
                 else
+                    //Debug.Log(animation);
                     animator.CrossFade(animation, crossfade, layer);
             }
         }
@@ -205,13 +237,17 @@ public class HeroUnitBase : UnitBase
     {
         // turn based example.
         if (newState == GameState.PlayerDeath)
-        { 
+        {
             _canMove = false;
             rb.linearVelocity = Vector3.zero;
             string animation = "Dance" + Random.Range(0, 6);
             ChangeAnimation(animation, 0.05f);
         }
-        else _canMove = true;
+        else
+        {
+            _canMove = true;
+            ChangeAnimation("Idle0", 0.05f);
+        } 
     }
     public void RightJoyStick(InputAction.CallbackContext ctx) => rightJoystick = ctx.ReadValue<Vector2>();
 
@@ -219,6 +255,7 @@ public class HeroUnitBase : UnitBase
 
     public void Aim(InputAction.CallbackContext context)
     {
+        /*
         if (context.performed)
         {
             if (_isAiming)
@@ -231,14 +268,14 @@ public class HeroUnitBase : UnitBase
                 _isAiming = true;
                 Debug.Log("IsAiming ON");
             }
-        }
+        } */
     }
 
     public void Fire(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            Debug.Log("Hold?");
+            //Debug.Log("Hold?");
         }
     }
 
@@ -247,7 +284,7 @@ public class HeroUnitBase : UnitBase
         if (context.performed && IsGrounded() && jumpCooldownCounter < 0)
         {
             ChangeAnimation("JumpBegin");
-            Debug.Log("Jump");
+            //Debug.Log("Jump");
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
             rb.AddForce(new Vector3(0, jumpForce, 0));
             jumpCooldownCounter = jumpCooldownLength;

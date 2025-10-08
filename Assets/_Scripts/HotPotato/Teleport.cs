@@ -6,7 +6,7 @@ public class Teleport : MonoBehaviour
     [SerializeField] private Transform teleportDestination;
 
     private Teleport otherTeleporter;
-    private float teleportCooldown = 0.05f;
+    private float teleportCooldown = -1f;
     public float teleportCounter = -1f;
     void Start()
     {

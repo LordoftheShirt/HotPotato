@@ -1,16 +1,60 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.CullingGroup;
 
 public class Potato : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private Transform myHost;
+    private float passCooldown = 0.25f;
+    private float passCounter = -1f;
+
+    private float potatoSpeedMultiplier = 1.05f;
+    [SerializeField] private GameObject thanosSnap;
+
+    private void Awake()
     {
-        
+        ExampleGameManager.OnBeforeStateChanged += OnStateChanged;
+        myHost = ExampleGameManager.Instance.players[Random.Range(0, 4)];
+
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        if (passCounter > 0)
+        {
+            passCounter -= Time.deltaTime;
+        }
+        transform.position = myHost.position;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && other.transform != myHost && passCounter < 0)
+        {
+            myHost = other.transform;
+            passCounter = passCooldown;
+            for (int i = 0; ExampleGameManager.Instance.players.Length > i; i++) 
+            {
+                if(myHost != ExampleGameManager.Instance.players[i])
+                {
+                    ExampleGameManager.Instance.players[i].GetComponent<HeroUnitBase>().PotatoSpeedMultiplier = 1f;
+                }
+                else
+                {
+                    ExampleGameManager.Instance.players[i].GetComponent<HeroUnitBase>().PotatoSpeedMultiplier = potatoSpeedMultiplier;
+                }
+            }
+        }
+    }
+
+    private void OnStateChanged(GameState newState)
+    {
+        if(newState == GameState.PlayerDeath)
+        {
+            ExampleGameManager.OnBeforeStateChanged -= OnStateChanged;
+            Instantiate(thanosSnap, myHost.position, Quaternion.identity);
+            myHost.gameObject.SetActive(false);
+            Destroy(this.gameObject);
+        }
     }
 }
