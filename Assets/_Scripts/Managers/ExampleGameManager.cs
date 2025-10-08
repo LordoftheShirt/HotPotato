@@ -41,7 +41,7 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
                 break;
             case GameState.LoopingChase:
                 fireworks.SetActive(false);
-                StartCoroutine(SpawnPotato());
+                SpawnPotato();
                 break;
             case GameState.FinalCountDown:
                 StartCoroutine(ChorusBuildUp());
@@ -114,20 +114,29 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
         CheckPlayersRemaining();
     }
 
-    IEnumerator SpawnPotato()
+    private void SpawnPotato()
     {
-        Debug.Log("PotatoNumerator");
-        int randomPlayer = UnityEngine.Random.Range(0, 4);
-        if (ExampleGameManager.Instance.players[randomPlayer].gameObject.activeInHierarchy)
+        GameObject player;
+        int randomPlayer = 0;
+        Debug.Log("SpawnPotato");
+        while (true)
         {
-            Debug.Log("Spawn potato at " + ExampleGameManager.Instance.players[randomPlayer].gameObject.name);
-            Instantiate(potato, ExampleGameManager.Instance.players[randomPlayer].position, Quaternion.identity);
+            randomPlayer = UnityEngine.Random.Range(0, 4);
+            player = ExampleGameManager.Instance.players[randomPlayer].gameObject;
+            Debug.Log("RandomCheck1:" + randomPlayer);
+            if (player.activeInHierarchy)
+            {
+                Debug.Log("RandomCheck2:" + randomPlayer);
+                Debug.Log("Spawn potato at " + player.name);
+                Instantiate(potato, player.transform.position, Quaternion.identity);
+                StartCoroutine(PlayLoopXTimes());
+                break;
+            }
+            else
+            {
+                Debug.Log("Player was disabled: " + ExampleGameManager.Instance.players[randomPlayer].gameObject.name);
+            }
         }
-        else
-        {
-            yield return null;
-        }
-        StartCoroutine(PlayLoopXTimes());
     }
 
     private void CheckPlayersRemaining()
