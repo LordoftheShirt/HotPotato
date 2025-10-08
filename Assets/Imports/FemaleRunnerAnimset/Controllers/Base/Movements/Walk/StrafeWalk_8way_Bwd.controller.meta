@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b4e3f5e3c08ce4047886477ae4bf91e9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301499
+  packageName: Female Runner Animset - FreeWalk&Jog
+  packageVersion: 1.1.1
+  assetPath: Assets/FemaleRunnerAnimset/Controllers/Base/Movements/Walk/StrafeWalk_8way_Bwd.controller
+  uploadId: 787888
