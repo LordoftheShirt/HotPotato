@@ -8,9 +8,12 @@ public class AudioSystem : Singleton<AudioSystem>
     [SerializeField] private AudioSource _musicSource;
     [SerializeField] private AudioSource _soundsSource;
 
-    public void PlayMusic(AudioClip clip)
+    [SerializeField] public AudioClip[] songs;
+
+    public void PlayMusic(AudioClip clip, float FastForward = 0f)
     {
         _musicSource.clip = clip;
+        _musicSource.time = FastForward;
         _musicSource.Play();
     }
 
@@ -18,12 +21,22 @@ public class AudioSystem : Singleton<AudioSystem>
     {
         _soundsSource.transform.position = pos;
         _soundsSource.PlayOneShot(clip, vol);
-        
+
     }
 
     public void PlaySound(AudioClip clip, float vol = 1)
     {
         _soundsSource.PlayOneShot(clip, vol);
 
+    }
+
+    public void StopMusic()
+    {
+        _musicSource.Stop();
+    }
+
+    public AudioSource GetMusicSource()
+    {
+        return _musicSource;
     }
 }

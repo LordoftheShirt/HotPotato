@@ -24,6 +24,8 @@ public class HeroUnitBase : UnitBase
     // these subscribe the 'OnStateChanged' method to the OnBeforeStateChanged event. Whenever it triggers, so will the OnStateChanged method (I presume). 
     private void Awake() => ExampleGameManager.OnBeforeStateChanged += OnStateChanged;
 
+
+
     private void Start()
     {
         SetStats(ResourceSystem.Instance.GetExampleHero(0).BaseStats);
@@ -70,7 +72,7 @@ public class HeroUnitBase : UnitBase
 
     private void CheckAnimation()
     {
-        if (currentAnimation == "JumpBegin" || currentAnimation == "JumpLand")
+        if (currentAnimation == "JumpBegin" || currentAnimation == "JumpLand" || currentAnimation.StartsWith("Dance"))
             return;
 
         if (currentAnimation == "JumpFall")
@@ -202,7 +204,14 @@ public class HeroUnitBase : UnitBase
     private void OnStateChanged(GameState newState)
     {
         // turn based example.
-        if (newState == GameState.HeroTurn) _canMove = true;
+        if (newState == GameState.PlayerDeath)
+        { 
+            _canMove = false;
+            rb.linearVelocity = Vector3.zero;
+            string animation = "Dance" + Random.Range(0, 6);
+            ChangeAnimation(animation, 0.05f);
+        }
+        else _canMove = true;
     }
     public void RightJoyStick(InputAction.CallbackContext ctx) => rightJoystick = ctx.ReadValue<Vector2>();
 
