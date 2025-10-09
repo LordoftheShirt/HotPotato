@@ -27,6 +27,8 @@ public class HeroUnitBase : UnitBase
     private Animator animator;
     private string currentAnimation = "";
 
+    private float hasExisted = 0.1f;
+
     // these subscribe the 'OnStateChanged' method to the OnBeforeStateChanged event. Whenever it triggers, so will the OnStateChanged method (I presume). 
     private void Awake() => ExampleGameManager.OnBeforeStateChanged += OnStateChanged;
 
@@ -70,13 +72,20 @@ public class HeroUnitBase : UnitBase
 
     private void FixedUpdate()
     {
-        if (jumpCooldownCounter > 0)
+        if (hasExisted < 0)
         {
-            jumpCooldownCounter -= Time.deltaTime;
-        }
+            if (jumpCooldownCounter > 0)
+            {
+                jumpCooldownCounter -= Time.deltaTime;
+            }
 
-        Movement();
-        CheckAnimation();
+            Movement();
+            CheckAnimation();
+        }
+        else
+        {
+            hasExisted -= Time.deltaTime;
+        }
     }
 
     private void Movement()
@@ -281,13 +290,16 @@ public class HeroUnitBase : UnitBase
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed && IsGrounded() && jumpCooldownCounter < 0)
+        if (hasExisted < 0)
         {
-            ChangeAnimation("JumpBegin");
-            //Debug.Log("Jump");
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-            rb.AddForce(new Vector3(0, jumpForce, 0));
-            jumpCooldownCounter = jumpCooldownLength;
+            if (context.performed && IsGrounded() && jumpCooldownCounter < 0)
+            {
+                ChangeAnimation("JumpBegin");
+                //Debug.Log("Jump");
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+                rb.AddForce(new Vector3(0, jumpForce, 0));
+                jumpCooldownCounter = jumpCooldownLength;
+            }
         }
     }
 

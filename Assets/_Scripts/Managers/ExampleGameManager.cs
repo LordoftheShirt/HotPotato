@@ -73,8 +73,8 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
         {
             AudioSystem.Instance.PlayMusic(AudioSystem.Instance.songs[1], firstLoopDelay);
             isFirstLoop = false;
-            loopCount = 0; //UnityEngine.Random.Range(1, 4);
-            Debug.Log("Loop count set: " + loopCount);
+            loopCount = UnityEngine.Random.Range(1, 4);
+            //Debug.Log("Loop count set: " + loopCount);
             yield return new WaitForSeconds(AudioSystem.Instance.GetMusicSource().clip.length - firstLoopDelay);
         }
 
@@ -82,8 +82,8 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
         {
             AudioSystem.Instance.PlayMusic(AudioSystem.Instance.songs[1], 5.5f);
             isAfterChorus = false;
-            loopCount = 0; //UnityEngine.Random.Range(0, 4);
-            Debug.Log("Loop count set: " + loopCount);
+            loopCount = UnityEngine.Random.Range(0, 4);
+            //Debug.Log("Loop count set: " + loopCount);
             yield return new WaitForSeconds(AudioSystem.Instance.GetMusicSource().clip.length - 5.5f);
         }
 
@@ -134,7 +134,7 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
             }
             else
             {
-                Debug.Log("Player was disabled: " + ExampleGameManager.Instance.players[randomPlayer].gameObject.name);
+                //Debug.Log("Player was disabled: " + ExampleGameManager.Instance.players[randomPlayer].gameObject.name);
             }
         }
     }
@@ -149,7 +149,7 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
                 playerCount++;
             }
         }
-        Debug.Log("CheckPlayersRemaing playercount: " +  playerCount);
+        //Debug.Log("CheckPlayersRemaing playercount: " +  playerCount);
         if (playerCount == 1) 
         {
             // Win!
@@ -166,10 +166,10 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
 
     private void ReactivePlayers()
     {
-        Debug.Log("Reactivate players start");
+        //Debug.Log("Reactivate players start");
         for (int i = 0; ExampleGameManager.Instance.players.Length > i; i++)
         {
-            Debug.Log("Player reactivated: " + i);
+            //Debug.Log("Player reactivated: " + i);
             ExampleGameManager.Instance.players[i].gameObject.SetActive(true);
         }
     }

@@ -14,7 +14,8 @@ public class Potato : MonoBehaviour
     private void Awake()
     {
         ExampleGameManager.OnBeforeStateChanged += OnStateChanged;
-        myHost = ExampleGameManager.Instance.players[Random.Range(0, 4)];
+        //myHost = ExampleGameManager.Instance.players[Random.Range(0, 4)];
+        //transform.position = myHost.position;
 
     }
 
@@ -24,13 +25,19 @@ public class Potato : MonoBehaviour
         {
             passCounter -= Time.deltaTime;
         }
-        transform.position = myHost.position;
+
+        if (myHost != null)
+        {
+            transform.position = myHost.position;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        
         if (other.CompareTag("Player") && other.transform != myHost && passCounter < 0)
         {
+            Debug.Log("Collided with player:" + other.gameObject.name);
             myHost = other.transform;
             passCounter = passCooldown;
             for (int i = 0; ExampleGameManager.Instance.players.Length > i; i++) 
@@ -44,7 +51,7 @@ public class Potato : MonoBehaviour
                     ExampleGameManager.Instance.players[i].GetComponent<HeroUnitBase>().PotatoSpeedMultiplier = potatoSpeedMultiplier;
                 }
             }
-        }
+        } 
     }
 
     private void OnStateChanged(GameState newState)

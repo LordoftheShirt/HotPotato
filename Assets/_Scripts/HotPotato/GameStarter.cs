@@ -22,7 +22,7 @@ public class GameStarter : MonoBehaviour
         }
         else if (gameReady)
         {
-            Debug.Log("Game Start!");
+            //Debug.Log("Game Start!");
             Reset();
             ExampleGameManager.Instance.ChangeState(GameState.Starting);
         }
@@ -30,11 +30,11 @@ public class GameStarter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Contact");
+        //Debug.Log("Contact");
         if (other.CompareTag("Player"))
         {
             playerCount++;
-            Debug.Log("Player amount increased to: " + playerCount);
+            //Debug.Log("Player amount increased to: " + playerCount);
 
             if (playerCount == playerMax)
             {
@@ -51,10 +51,10 @@ public class GameStarter : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerCount--;
-            Debug.Log("Player amount decreased to: " + playerCount);
+            //Debug.Log("Player amount decreased to: " + playerCount);
             if (playerCount < playerMax && gameReady)
             {
-                Debug.Log("StopMusic!");
+                //Debug.Log("StopMusic!");
                 gameReady = false;
                 AudioSystem.Instance.StopMusic();
                 countDownCounter = -1;
