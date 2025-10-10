@@ -1012,6 +1012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39de700dda9f36a43b244b0f94edf84b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInputManager: {fileID: 2134005548}
   gameStarter: {fileID: 1131570236}
   potato: {fileID: 8430513344595180289, guid: 5b5eec8462c1f794fa35ede47dcd44f8, type: 3}
   fireworks: {fileID: 1040567372}

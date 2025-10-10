@@ -3,10 +3,13 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
 
 // Keeps tracks of all of the stages within the game. A State Machine is the more complex alternative for better scaling.
 public class ExampleGameManager : Singleton<ExampleGameManager>
 {
+
+    [SerializeField] PlayerInputManager playerInputManager;
     public static event Action<GameState> OnBeforeStateChanged;
     public static event Action<GameState> OnAfterStateChanged;
 
@@ -63,6 +66,10 @@ public class ExampleGameManager : Singleton<ExampleGameManager>
 
     private void HandleStarting()
     {
+        if (players[3] != null)
+        {
+            playerInputManager.DisableJoining();
+        }
         AudioSystem.Instance.StopMusic();
         isFirstLoop = true;
         ChangeState(GameState.LoopingChase);

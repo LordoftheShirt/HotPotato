@@ -30,7 +30,10 @@ public class HeroUnitBase : UnitBase
     private float hasExisted = 0.1f;
 
     // these subscribe the 'OnStateChanged' method to the OnBeforeStateChanged event. Whenever it triggers, so will the OnStateChanged method (I presume). 
-    private void Awake() => ExampleGameManager.OnBeforeStateChanged += OnStateChanged;
+    private void Awake()
+    {
+        ExampleGameManager.OnBeforeStateChanged += OnStateChanged;
+    } 
 
 
 
