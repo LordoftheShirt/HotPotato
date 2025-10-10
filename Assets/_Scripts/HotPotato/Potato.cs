@@ -8,7 +8,7 @@ public class Potato : MonoBehaviour
     private float passCooldown = 0.25f;
     private float passCounter = -1f;
 
-    private float potatoSpeedMultiplier = 1.05f;
+    private float potatoSpeedMultiplier = 1.1f;
     [SerializeField] private GameObject thanosSnap;
 
     private void Awake()
