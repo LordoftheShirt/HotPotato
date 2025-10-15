@@ -39,6 +39,7 @@ public class HeroUnitBase : UnitBase
 
     private void Start()
     {
+        /*
         if (ExampleGameManager.Instance.players[0] == null)
         {
             ExampleGameManager.Instance.players[0] = transform;
@@ -62,7 +63,7 @@ public class HeroUnitBase : UnitBase
             ExampleGameManager.Instance.players[3] = transform;
             myBody.material = colors[3];
             myHead.material = colors[3];
-        }
+        } */
 
         SetStats(ResourceSystem.Instance.GetExampleHero(0).BaseStats);
         rb = GetComponent<Rigidbody>();
